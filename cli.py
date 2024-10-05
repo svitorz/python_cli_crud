@@ -9,8 +9,20 @@ def execute_command(comando):
                 print(user)
         else:
             print("Nenhum usuário encontrado")
+    elif comando == 2:
+        insert = False
+        try:
+            name = input("\nInsira seu nome:")
+            email = input("\nInsira seu email:")
+            password = input("\nInsira sua senha:")
 
-
+            insert = crud.insert_user(name,email,password)
+        except ValueError:
+            print("Insira valores válidos.")
+        if insert is True:
+            print("Usuário inserido com sucesso!")
+        else: 
+            print("Erro ao inserir usuário!")
 def cli():
     table = crud.create_table()
 
