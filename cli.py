@@ -11,26 +11,26 @@ def execute_command(comando):
                     id = user[1]
                     print(f"\nId:{id} Nome:{name}\n")
             else:
-                print("Nenhum usuário encontrado")
+                print("Nenhum usuário encontrado\n")
         case 2:
             insert = False
             try:
-                name = input("Insira seu nome:")
-                email = input("\nInsira seu email:")
-                password = input("\nInsira sua senha:")
+                name = input("Insira seu nome:\n")
+                email = input("\nInsira seu email:\n")
+                password = input("\nInsira sua senha:\n")
 
                 insert = crud.insert_user(name, email, password)
                 if insert is True:
-                    print("Usuário inserido com sucesso!")
+                    print("Usuário inserido com sucesso!\n")
                 else:
-                    print("Erro ao inserir usuário!")
+                    print("Erro ao inserir usuário!\n")
             except ValueError:
-                print("Insira valores válidos.")
+                print("Insira valores válidos.\n")
 
         case 3:
             try:
                 update = False
-                id = int(input("Insira o id do usuário que deseja editar:"))
+                id = int(input("Insira o id do usuário que deseja editar:\n"))
 
                 name = input("Insira o novo nome:")
                 email = input("Insira o novo email:")
@@ -38,11 +38,23 @@ def execute_command(comando):
                 update = crud.update_user(id, name, email, password)
 
                 if update is True:
-                    print("Usuário alterado com sucesso!")
+                    print("Usuário alterado com sucesso!\n")
                 else:
-                    print("Houve um erro ao editar usuário!")
+                    print("Houve um erro ao editar usuário!\n")
             except ValueError:
-                print("Insira valores válidos.")
+                print("Insira valores válidos.\n")
+
+        case 4:
+            delete = False
+            try:
+                id = int(input("Insira o id do usuário que deseja excluir:\n"))
+                delete = crud.delete_user(id)
+                if delete is True:
+                    print("Usuário excluído com sucesso!\n")
+                else:
+                    print("Erro ao exluir usuário\n")
+            except ValueError:
+                print("Insira um valor inteiro.\n")
 
 
 def cli():
@@ -59,7 +71,7 @@ def cli():
                 )
             )
         except ValueError:
-            print("Insira um valor válido")
+            print("Insira um valor válido\n")
             return
         execute_command(escolha)
         if escolha == 0:

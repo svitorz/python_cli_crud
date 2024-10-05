@@ -1,3 +1,4 @@
+from logging import exception
 from db import get_connection
 
 
@@ -77,6 +78,24 @@ def update_user(id, name, email, password):
             "UPDATE users SET name = %s, email = %s, password = %s WHERE id_users = %s",
             (name, email, password, id),
         )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+def delete_user(id):
+    conn = get_connection()
+
+    if conn is None:
+        return
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id_users = %s", (id,))
         conn.commit()
         cursor.close()
         conn.close()
