@@ -1,4 +1,3 @@
-from logging import exception
 from db import get_connection
 
 
@@ -41,15 +40,43 @@ def list_users():
         print("Erro ao retornar usuários", e)
         return []
 
+
 def insert_user(name, email, password):
     conn = get_connection()
 
     if conn is None:
         return
-    
-    try: 
+
+    try:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO USERS(name, email, password) VALUES (%s, %s,%s)", (name, email, password))
+        cursor.execute(
+            "INSERT INTO USERS(name, email, password) VALUES (%s, %s,%s)",
+            (name, email, password),
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        if "users_email_key" in str(e):
+            print("Este endereço de email já está cadastrado em nosso banco de dados")
+        else:
+            print(e)
+        return False
+
+
+def update_user(id, name, email, password):
+    conn = get_connection()
+
+    if conn is None:
+        return
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE users SET name = %s, email = %s, password = %s WHERE id_users = %s",
+            (name, email, password, id),
+        )
         conn.commit()
         cursor.close()
         conn.close()
