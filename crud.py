@@ -1,20 +1,41 @@
-from logging import exception
-import psycopg2
-from dotenv import load_dotenv
-import os
+from db import get_connection
 
-load_dotenv()
 
-db_name = os.getenv("DB_NAME")
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_port = os.getenv("DB_PORT")
+def create_table():
+    conn = get_connection()
+    if conn is None:
+        return
+    cursor = conn.cursor()
 
-try:
-    conn = psycopg2.connect(
-        dbname=db_name, user=db_user, password=db_password, host=db_host, port=db_port
-    )
-    print("Conexão realizada com sucesso!")
-except Exception as e:
-    print("Erro ao conectar-se ao banco de dados.", e)
+    try:
+        cursor.execute(
+            "CREATE TABLE USERS(id_users serial PRIMARY KEY,name varchar(50),email varchar(150) UNIQUE,senha varchar(255));"
+        )
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        if 'relation "users" already exists' in str(e):
+            return True
+        else:
+            return e
+
+
+def list_users():
+    conn = get_connection()
+    if conn is None:
+        return
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT name,id_users FROM users;")
+        users = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return users
+    except Exception as e:
+        print("Erro ao retornar usuários", e)
+        return []
