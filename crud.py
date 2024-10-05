@@ -1,4 +1,5 @@
 from logging import exception
+from typing import final
 from db import get_connection
 
 
@@ -14,14 +15,15 @@ def create_table():
         )
 
         conn.commit()
-        cursor.close()
-        conn.close()
-        return True
     except Exception as e:
         if 'relation "users" already exists' in str(e):
             return True
         else:
             return e
+    finally:
+        cursor.close()
+        conn.close()
+        return True
 
 
 def list_users():
@@ -48,6 +50,7 @@ def insert_user(name, email, password):
     if conn is None:
         return
 
+    cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute(
@@ -55,15 +58,17 @@ def insert_user(name, email, password):
             (name, email, password),
         )
         conn.commit()
-        cursor.close()
-        conn.close()
-        return True
     except Exception as e:
         if "users_email_key" in str(e):
             print("Este endereço de email já está cadastrado em nosso banco de dados")
         else:
             print(e)
         return False
+    finally:
+        if cursor is not None:
+            cursor.close()
+        conn.close()
+        return True
 
 
 def update_user(id, name, email, password):
@@ -71,7 +76,7 @@ def update_user(id, name, email, password):
 
     if conn is None:
         return
-
+    cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute(
@@ -79,27 +84,56 @@ def update_user(id, name, email, password):
             (name, email, password, id),
         )
         conn.commit()
-        cursor.close()
-        conn.close()
-        return True
     except Exception as e:
         print(e)
         return False
+    finally:
+        if cursor is not None:
+            cursor.close()
+        conn.close()
+        return True
 
 
 def delete_user(id):
+    conn = get_connection()
+    if conn is None:
+        return
+
+    cursor = None
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id_users = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        if cursor is not None:
+            cursor.close()
+        conn.close()
+        return True
+
+
+def show_user(clause):
     conn = get_connection()
 
     if conn is None:
         return
 
+    cursor = None
+
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM users WHERE id_users = %s", (id,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return True
+        query_string = "SELECT * FROM USERS WHERE ID_USERS = %s"
+
+        cursor.execute(query_string, (clause,))
+        users = cursor.fetchone()
+        print(users)
+        return users
     except Exception as e:
         print(e)
-        return False
+        return []
+    finally:
+        if cursor is not None:
+            cursor.close()
+        conn.close()

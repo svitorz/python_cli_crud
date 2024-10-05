@@ -9,7 +9,9 @@ def execute_command(comando):
                 for user in users:
                     name = user[0]
                     id = user[1]
-                    print(f"\nId:{id} Nome:{name}\n")
+                    print("-----------------------")
+                    print(f"|id:{id}|nome:{name}|")
+                    print("------------------------")
             else:
                 print("Nenhum usuário encontrado\n")
         case 2:
@@ -55,6 +57,17 @@ def execute_command(comando):
                     print("Erro ao exluir usuário\n")
             except ValueError:
                 print("Insira um valor inteiro.\n")
+
+        case 5:
+            try:
+                clause = int(input("Insira o id do usuário que deseja visualizar:\n"))
+                user = crud.show_user(clause)
+                if user:
+                    print("-----------------------------------------------")
+                    print(f"| id:{user[0]}|nome:{user[1]}|email:{user[2]} |")
+                    print("-----------------------------------------------")
+            except ValueError:
+                print("Valor inserido inválido.\n")
 
 
 def cli():
